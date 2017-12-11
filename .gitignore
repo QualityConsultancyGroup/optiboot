@@ -1,1 +1,3 @@
 /optiboot/bootloaders/optiboot/baudcheck.tmp.sh
+*.hex
+*.lst
