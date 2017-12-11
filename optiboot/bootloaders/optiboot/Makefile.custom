@@ -16,23 +16,19 @@ wildfire:
 xplained328pb-custom: TARGET = $@
 xplained328pb-custom: CHIP = atmega328
 xplained328pb-custom:
-	$(MAKE) $(CHIP) AVR_FREQ=8000000L
+	$(MAKE) $(CHIP) AVR_FREQ=8000000L LED_START_FLASHES=1 BAUD_RATE=19200
 	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
 	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
 
 xplained328pb-custom_isp: xplained328pb-custom
 xplained328pb-custom_isp: TARGET = xplained328pb-custom
-xplained328pb-custom_isp: MCU_TARGET = atmega328p
+xplained328pb-custom_isp: MCU_TARGET = atmega328pb
 # 512 byte boot, SPIEN
 xplained328pb-custom_isp: HFUSE ?= DE
-# Low power xtal (16MHz) 16KCK/14CK+65ms
-xplained328pb-custom_isp: LFUSE ?= FF
-# 2.7V brownout
-xplained328pb-custom_isp: EFUSE ?= 05
-xplained328pb-custom_isp: isp-custom
+# ext clock 8Mhz (value copied from original)
+xplained328pb-custom_isp: LFUSE ?= e0
+# (value copied from original)
+xplained328pb-custom_isp: EFUSE ?= FF
+xplained328pb-custom_isp: AVRDUDE_FLAGS = -C avrdude-m328pb-usbtiny.conf -c usbtiny -p $(MCU_TARGET)
+xplained328pb-custom_isp: isp
 
-
-AVRDUDE_FLAGS=$(AVRDUDE_CONF) -c $(ISPTOOL) -p $(MCU_TARGET)
-
-isp-custom: $(PROGRAM)_$(TARGET).hex
-	$(AVRDUDE_ROOT)avrdude $(AVRDUDE_FLAGS) $(ISPFUSES) $(ISPFLASH)
